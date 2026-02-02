@@ -58,8 +58,11 @@ void teardownDisplay(SDL_Renderer *renderer){
     SDL_Quit();
 }
 
-void drawCircle(SDL_Renderer *renderer, int x, int y, int radius){
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+void drawCircle(SDL_Renderer *renderer, Ball& ball){
+    int x = ball.x;
+    int y = ball.y;
+    int radius = ball.radius;
+    SDL_SetRenderDrawColor(renderer, ball.color.r, ball.color.g, ball.color.b, ball.color.a);
     for (int w = 0; w < radius * 2; w++)
     {
         for (int h = 0; h < radius * 2; h++)
