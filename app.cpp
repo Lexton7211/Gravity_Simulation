@@ -4,9 +4,7 @@
 #include "logic.hpp"
 
 int main(){
-    const double TARGET_FPS = 180.0;
-    const double TARGET_FRAME_TIME = 1.0 / TARGET_FPS;
-    double deltaTime = 1.0 / TARGET_FPS;
+    double deltaTime = 1.0 / 180;
     SDL_Renderer* renderer = nullptr;
 
     renderer = setupDisplay();
@@ -15,7 +13,11 @@ int main(){
     }
     //colors
     SDL_Color white = {255, 255, 255, 255};
+    SDL_Color red = {255, 0, 0, 255};
+    SDL_Color green = {0, 255, 0, 255};
+    SDL_Color blue = {0, 0, 255, 255};
 
+    //setup balls
     const int circleRadius = 52;
     std::vector<Ball> balls;
     Ball temp;
@@ -23,11 +25,12 @@ int main(){
     temp.y = 200;
     temp.vx = 0;
     temp.vy = 0;
-    temp.radius = 32;
-    temp.mass = 30;
+    temp.radius = circleRadius;
+    temp.mass = 50;
     temp.color = white;
     balls.push_back(temp);
 
+    /*
     temp.x = 800;
     temp.y = 500;
     temp.vx = 0;
@@ -36,13 +39,12 @@ int main(){
     temp.mass = 50;
     temp.color = white;
     balls.push_back(temp);
-
+    */
     bool running = true;
     SDL_Event event;
     double gravity = 0.005;
     int selectedball = 0;
     while (running){
-        Uint64 start = SDL_GetPerformanceCounter();
         while (SDL_PollEvent(&event)){
             if (event.type == SDL_QUIT){
                 running = false;
@@ -55,8 +57,8 @@ int main(){
                     balls[0].vx = 0;
                     balls[0].vy = 0;
 
-                    balls[1].vx = 0;
-                    balls[1].vy = 0;
+                    //balls[1].vx = 0;
+                    //balls[1].vy = 0;
                 }
                 if(event.key.keysym.sym == SDLK_e){
                     if(balls[selectedball].vx > 0) balls[selectedball].vx += 2;
@@ -70,6 +72,7 @@ int main(){
 
         }
 
+        //mouse clicks for debug
         int x, y;
         Uint32 buttons = SDL_GetMouseState(&x, &y);
 
@@ -77,35 +80,18 @@ int main(){
             balls[selectedball].x = x;
             balls[selectedball].y = y;
         }
-
-        balls[0].vy += gravity;
-        checkWallCollisions(balls[0], deltaTime);
-        balls[0].x += balls[0].vx;
-        balls[0].y += balls[0].vy;
-
-        //balls[1].vy += gravity;
-        checkWallCollisions(balls[1], deltaTime);
-        balls[1].x += balls[1].vx;
-        balls[1].y += balls[1].vy;
-
-        ballCollisions(balls[0], balls[1]);
+ 
+        //logic checks and rendering
         clearDisplay(renderer);
-        drawCircle(renderer, balls[0]);
-        drawCircle(renderer, balls[1]);
+        for(int i = 0; i < balls.size(); i++){
+            updateGravity(balls[i], gravity, deltaTime);
+            if(i + 1 < balls.size()) ballCollisions(balls[i], balls[i + 1]);
+            drawCircle(renderer, balls[i]);
+        }
 
         presentDisplay(renderer);
-        Uint64 end = SDL_GetPerformanceCounter();
-        double frameTime =
-            (double)(end - start) / SDL_GetPerformanceFrequency();
-        double fps = 1.0 / frameTime;
-
-        if (frameTime < TARGET_FRAME_TIME)
-        {
-            SDL_Delay((Uint32)((TARGET_FRAME_TIME - frameTime) * 1000.0));
-        }
+        SDL_Delay(5.56);
     }
-
-
     teardownDisplay(renderer);
     return 0;
 }

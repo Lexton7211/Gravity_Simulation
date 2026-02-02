@@ -13,5 +13,6 @@ struct Ball {
 
 void checkWallCollisions(Ball& ball, double deltaTime);
 void ballCollisions(Ball& ball1, Ball& ball2);
+void updateGravity(Ball& ball, double gravity, double deltaTime);
 
 #endif

@@ -4,19 +4,19 @@
 void checkWallCollisions(Ball& ball, double deltaTime){
     if(ball.y + ball.radius >= 1000){
         ball.y = 1000 - ball.radius;
-        ball.vy *= -0.8;
+        ball.vy *= -1;
     }
     if(ball.y - ball.radius <= 0){
         ball.y = 0 + ball.radius;
-        ball.vy *= -0.8;
+        ball.vy *= -1;
     }
     if(ball.x + ball.radius >= 1600){
         ball.x = 1600 - ball.radius;
-        ball.vx *= -0.8;
+        ball.vx *= -1;
     }
     if(ball.x - ball.radius <= 0){
         ball.x = 0 + ball.radius;
-        ball.vx *= -0.8;
+        ball.vx *= -1;
     }
 }
 
@@ -65,4 +65,11 @@ void ballCollisions(Ball& ball1, Ball& ball2){
         ball2.vx = v2x;
         ball2.vy = v2y;
     }
+}
+
+void updateGravity(Ball& ball, double gravity, double deltaTime){
+    ball.vy += gravity;
+    checkWallCollisions(ball, deltaTime);
+    ball.x += ball.vx;
+    ball.y += ball.vy;
 }
